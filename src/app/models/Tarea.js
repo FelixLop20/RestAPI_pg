@@ -25,7 +25,8 @@ const Tarea = sequelize.define('tarea', {
     estado: {
         allowNull: false,
         type: DataTypes.INTEGER,
-        comment: 'Estado de la tarea (1: Pendiente, 2: En proceso, 3: Finalizada)'
+        comment: 'Estado de la tarea (1: Pendiente, 2: En proceso, 3: Finalizada)',
+        defaultValue: 1
     },
     prioridad: {
         allowNull: false,
