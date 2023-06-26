@@ -11,7 +11,7 @@ const Tarea = sequelize.define('tarea', {
         autoIncrement: true
     },
     descripcion: {
-        allowNull: false,
+        allowNull: true,
         type: DataTypes.STRING(255),
     },
     colab_id: {
@@ -40,6 +40,10 @@ const Tarea = sequelize.define('tarea', {
     fecha_fin: {
         allowNull: false,
         type: DataTypes.DATE
+    },
+    notas: {
+        allowNull: true,
+        type: DataTypes.STRING(255)
     }
 }, {
     timestamps: false,
@@ -52,9 +56,9 @@ Tarea.hasMany(Nota, {
     sourceKey: 'id'
 });
 
-Nota.belongsTo(Tarea, {
+/*Nota.belongsTo(Tarea, {
     foreignKey: 'tarea_id',
     targetKey: 'id'
-});
+});*/
 
 module.exports = Tarea;

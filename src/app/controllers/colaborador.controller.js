@@ -2,6 +2,7 @@ const colaboradorModel = require('../models/Colaborador');
 const HttpError = require('../../utils/http-error');
 const { ReasonPhrases, StatusCodes } = require("http-status-codes");
 
+//cargar los colaboradores preinsertardos en la base de datos
 const cargarColaboradores = async (req, res, next) => {
 
     let colaboradores;

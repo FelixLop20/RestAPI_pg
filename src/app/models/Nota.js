@@ -15,10 +15,10 @@ const Nota = sequelize.define('nota', {
     tarea_id: {
         allowNull: false,
         type: DataTypes.INTEGER,
-        references: {
+       /* references: {
             model: 'tarea',
             key: 'id'
-        }
+        }*/
     }
 }, {
     timestamps: false,

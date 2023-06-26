@@ -22,4 +22,4 @@ const cargarNotas = async (req, res, next) => {
     }
 };
 
-exports.cargarNotas = cargarNotas;
+exports.cargarNotas = cargarNotas
