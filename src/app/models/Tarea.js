@@ -1,6 +1,5 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../database/config');
-const Nota = require('./Nota');
 
 const Tarea = sequelize.define('tarea', {
     //Atribitos
@@ -15,7 +14,7 @@ const Tarea = sequelize.define('tarea', {
         type: DataTypes.STRING(255),
     },
     colab_id: {
-        allowNull: true,
+        allowNull: false,
         type: DataTypes.INTEGER,
         references: {
             model: 'colaborador',
@@ -50,15 +49,5 @@ const Tarea = sequelize.define('tarea', {
     freezeTableName: true,
     tableName: 'tarea'
 });
-
-Tarea.hasMany(Nota, {
-    foreignKey: 'tarea_id',
-    sourceKey: 'id'
-});
-
-/*Nota.belongsTo(Tarea, {
-    foreignKey: 'tarea_id',
-    targetKey: 'id'
-});*/
 
 module.exports = Tarea;

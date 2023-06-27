@@ -6,7 +6,6 @@ const cors = require('cors');
 
 const colaboradorRouter = require('./app/routes/colaborador.router');
 const tareaRouter = require('./app/routes/tarea.router');
-const notaRouter = require('./app/routes/nota.router');
 
 const app = express();
 
@@ -28,7 +27,6 @@ app.get('/', (req, res) => {
 
 app.use('/api/colaborador', colaboradorRouter);
 app.use('/api/tarea', tareaRouter);
-app.use('/api/nota', notaRouter);
 
 //controlar error si el endpoint no se encuentra.
 app.use((req, res) => {

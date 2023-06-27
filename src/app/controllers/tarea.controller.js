@@ -2,9 +2,8 @@ const tareaModel = require('../models/Tarea');
 const HttpError = require('../../utils/http-error');
 const { ReasonPhrases, StatusCodes } = require("http-status-codes");
 const colaboradorModel = require('../models/Colaborador');
-//const notaModel = require('../models/Nota');
 const sequelize = require('../../database/config');
-const { Op } = require('sequelize');
+const { Op} = require('sequelize');
 
 //metodo que carga los atributos de las tareas, para evitar la repeticion de codigo.
 const atributosTarea = () => {
@@ -22,9 +21,8 @@ const atributosTarea = () => {
         WHEN 2 THEN 'Media'
         WHEN 3 THEN 'Baja'
         END`), 'Prioridad'],
-
-        'fecha_inicio',
-        'fecha_fin',
+        [sequelize.fn('DATE', sequelize.col('fecha_inicio')), 'fecha_inicio'],
+        [sequelize.fn('DATE', sequelize.col('fecha_fin')), 'fecha_fin'],
         'notas'
     ]
 };
@@ -143,14 +141,24 @@ const cambiarEstadoTarea = async (req, res, next) => {
     }
 }
 
-
 //filtro de busqueda de tareas, por colaborador, prioridad, estado, rango de fechas
 const filtroTareas = async (req, res, next) => {
+
     try {
+        const whereCondition = {
+            'colab_id': req.body.colab_id || { [Op.ne]: null },
+            'estado': req.body.estado || { [Op.ne]: null },
+            'prioridad': req.body.prioridad || { [Op.ne]: null }
+        };
+
+        if (req.body.fecha_inicio || req.body.fecha_fin) {
+            whereCondition[Op.or] = [
+                { 'fecha_inicio': req.body.fecha_inicio, 'fecha_fin': req.body.fecha_fin },
+                { 'fecha_inicio': null, 'fecha_fin': null }
+            ];
+        }
         const tareas = await tareaModel.findAll({
-            //atributos de la tarea
-            attributes:
-                atributosTarea(),
+            attributes: atributosTarea(),
             order: [['fecha_inicio', 'ASC']],
             include: [
                 {
@@ -159,11 +167,7 @@ const filtroTareas = async (req, res, next) => {
                     required: false
                 }
             ],
-            where: {
-                'colab_id': req.body.colab_id ? req.body.colab_id : { [Op.ne]: null },
-                'estado': req.body.estado ? req.body.estado : { [Op.ne]: null },
-                'prioridad': req.body.prioridad ? req.body.prioridad : { [Op.ne]: null },
-            }
+            where: whereCondition
         });
         //respuesta del servidor
         res.status(StatusCodes.OK).json({

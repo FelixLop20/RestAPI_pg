@@ -21,6 +21,7 @@ const Colaborador = sequelize.define('colaborador', {
     tableName: 'colaborador'
 });
 
+//relaciones de tablas
 Colaborador.hasMany(Tarea, {
     foreignKey: 'colab_id',
     sourceKey: 'id'
