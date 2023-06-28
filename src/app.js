@@ -6,6 +6,8 @@ const cors = require('cors');
 
 const colaboradorRouter = require('./app/routes/colaborador.router');
 const tareaRouter = require('./app/routes/tarea.router');
+const estadoRouter = require('./app/routes/estado.router');
+const prioridadRouter = require('./app/routes/prioridad.router');
 
 const app = express();
 
@@ -27,13 +29,8 @@ app.get('/', (req, res) => {
 
 app.use('/api/colaborador', colaboradorRouter);
 app.use('/api/tarea', tareaRouter);
-
-//controlar error si el endpoint no se encuentra.
-app.use((req, res) => {
-    const error = new HttpError('Error 404 not found', 404);
-    throw (error);
-});
-
+app.use('/api/estado', estadoRouter);
+app.use('/api/prioridad', prioridadRouter);
 
 const port = process.env.APP_PORT;
 

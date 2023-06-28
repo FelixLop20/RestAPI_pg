@@ -21,15 +21,22 @@ const Tarea = sequelize.define('tarea', {
             key: 'id'
         }
     },
-    estado: {
+    estado_id: {
         allowNull: false,
         type: DataTypes.INTEGER,
+        references: {
+            model: 'estado',
+            key: 'id'
+        },
         comment: 'Estado de la tarea (1: Pendiente, 2: En proceso, 3: Finalizada)',
-        defaultValue: 1
     },
-    prioridad: {
+    prioridad_id: {
         allowNull: false,
         type: DataTypes.INTEGER,
+        references: {
+            model: 'prioridad',
+            key: 'id'
+        },
         comment: 'Prioridad de la tarea (1: Alta, 2: Media, 3: Baja)'
     },
     fecha_inicio: {
