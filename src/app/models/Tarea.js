@@ -41,11 +41,11 @@ const Tarea = sequelize.define('tarea', {
     },
     fecha_inicio: {
         allowNull: false,
-        type: DataTypes.DATE
+        type: DataTypes.DATEONLY
     },
     fecha_fin: {
         allowNull: false,
-        type: DataTypes.DATE
+        type: DataTypes.DATEONLY
     },
     notas: {
         allowNull: true,

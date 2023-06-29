@@ -5,7 +5,7 @@ const colaboradorModel = require('../models/Colaborador');
 const estadoModel = require('../models/Estado');
 const prioridadModel = require('../models/Prioridad');
 const sequelize = require('../../database/config');
-const { Op } = require('sequelize');
+const { Op, literal } = require('sequelize');
 
 //metodo que carga los atributos de las tareas, para evitar la repeticion de codigo.
 const atributosTarea = () => {
@@ -177,20 +177,24 @@ const filtroTareas = async (req, res, next) => {
     try {
         const whereCondition = {
             'colab_id': req.body.colab_id || { [Op.ne]: null },
-            'estado_id': req.body.estado || { [Op.ne]: null },
-            'prioridad_id': req.body.prioridad || { [Op.ne]: null }
+            'estado_id': req.body.estado_id || { [Op.ne]: null },
+            'prioridad_id': req.body.prioridad_id || { [Op.ne]: null }
         };
 
         if (req.body.fecha_inicio || req.body.fecha_fin) {
             whereCondition[Op.or] = [
-                { 'fecha_inicio': req.body.fecha_inicio, 'fecha_fin': req.body.fecha_fin },
-                { 'fecha_inicio': null, 'fecha_fin': null }
+                {
+                    [Op.and]: [
+                        literal(`fecha_inicio BETWEEN '${req.body.fecha_inicio}' AND '${req.body.fecha_fin}'`),
+                        literal(`fecha_fin BETWEEN '${req.body.fecha_inicio}' AND '${req.body.fecha_fin}'`),
+                    ],
+                }
             ];
         }
         const tareas = await tareaModel.findAll({
             attributes: atributosTarea(),
             order: [['fecha_inicio', 'ASC']],
-            include:atributosTarea(),
+            include: includes(),
             where: whereCondition
         });
         //respuesta del servidor
