@@ -116,15 +116,21 @@ const crearTarea = async (req, res, next) => {
 const editarTarea = async (req, res, next) => {
     try {
         const tarea_id = req.params.tarea_id;
-        const eTarea = await tareaModel.update(datosTareas(req), {
-            where: {
-                'id': tarea_id,
-                'estado_id': {
-                    [Op.ne]: 3
+        const tarea = await tareaModel.findByPk(tarea_id);
+
+        let eTarea;
+
+        if (datosTareas(req).colab_id !== 1 && (datosTareas(req).estado_id !== 2 || datosTareas(req).estado_id !== 3)) {
+            eTarea = await tareaModel.update(datosTareas(req), {
+                where: {
+                    'id': tarea_id,
+                    'estado_id': {
+                        [Op.ne]: 3
+                    }
                 }
-            }
-        });
-        res.status(eTarea > 0 ? StatusCodes.OK : StatusCodes.BAD_REQUEST.OK).json({
+            });
+        }
+        res.status(eTarea > 0 ? StatusCodes.OK : StatusCodes.BAD_REQUEST).json({
             message: eTarea > 0 ? '¡Tarea Editada!' : 'No es posible editar esta tarea'
         });
 
@@ -160,10 +166,11 @@ const cambiarEstadoTarea = async (req, res, next) => {
     try {
         const tarea_id = req.params.tarea_id;
         const tarea = await tareaModel.findByPk(tarea_id);
-        const estadoTarea = tarea && tarea.estado !== 3 ? await tarea.update({ estado: req.body.estado }) : null;
+        console.log(tarea);
+        const estadoTarea = tarea && tarea.estado_id !== 3 && tarea.colab_id !== 1 ? await tarea.update({ estado_id: req.body.estado_id }) : null;
 
         res.status(estadoTarea ? StatusCodes.OK : StatusCodes.BAD_REQUEST).json({
-            message: estadoTarea ? '¡Estado Cambiado!' : 'No se pude cambiar el estado'
+            message: estadoTarea ? '¡Estado Cambiado!' : 400
         });
 
     } catch (error) {

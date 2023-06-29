@@ -27,6 +27,10 @@ app.get('/', (req, res) => {
     res.send('App is runnig now');
 });
 
+app.use((err, req, res, next) => {
+    res.status(500).json({ error: 'Error al editar la tarea' });
+  });
+
 app.use('/api/colaborador', colaboradorRouter);
 app.use('/api/tarea', tareaRouter);
 app.use('/api/estado', estadoRouter);
