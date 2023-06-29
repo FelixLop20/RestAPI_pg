@@ -113,7 +113,7 @@ const crearTarea = async (req, res, next) => {
 };
 
 //editar las tareas que se encuentren unicamente en estado = Pendientes o en Proceso
-const editarTarea = async (req, res, next) => {
+const edrTarea = async (req, res, next) => {
     try {
         const tarea_id = req.params.tarea_id;
         const tarea = await tareaModel.findByPk(tarea_id);
@@ -139,6 +139,42 @@ const editarTarea = async (req, res, next) => {
     }
 };
 
+const editarTarea = async (req, res, next) => {
+    const tarea_id = req.params.tarea_id;
+    const tareaData = datosTareas(req);
+
+    try {
+        const { colab_id, estado_id } = tareaData;
+        if ((colab_id == 1 && estado_id == 1) || (colab_id != 1)) {
+            const tarea = await tareaModel.update(tareaData, {
+                where: {
+                    'id': tarea_id,
+                    'estado_id': {
+                        [Op.ne]: 3
+                    }
+                }
+            });
+            if (tarea) {
+                res.status(StatusCodes.OK).json({
+                    status: ReasonPhrases.OK,
+                    message: 'Tarea Editada'
+                });
+            } else {
+                res.status(StatusCodes.BAD_REQUEST).json({
+                    status: ReasonPhrases.BAD_REQUEST,
+                    message: 'No es posible editar la tarea'
+                });
+            }
+        } else {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                status: ReasonPhrases.BAD_REQUEST,
+                message: 'Necesitas agregar un colaborador a la tarea'
+            });
+        }
+    } catch (error) {
+        return next(new HttpError(error, 500));
+    }
+}
 
 //eliminar tareas si unicamente estas se ecuentran en estado != En proceso
 const eliminarTarea = async (req, res, next) => {

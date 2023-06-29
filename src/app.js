@@ -27,17 +27,26 @@ app.get('/', (req, res) => {
     res.send('App is runnig now');
 });
 
-app.use((err, req, res, next) => {
-    res.status(500).json({ error: 'Error al editar la tarea' });
-  });
-
 app.use('/api/colaborador', colaboradorRouter);
 app.use('/api/tarea', tareaRouter);
 app.use('/api/estado', estadoRouter);
 app.use('/api/prioridad', prioridadRouter);
 
-const port = process.env.APP_PORT;
+app.use((req, res) => {
+  const error = new HttpError("Could not find this route..", 404);
+  throw error;
+});
 
+
+app.use((error, req, res, next) => {
+    if (res.headerSent) {
+        return next(error);
+    }
+    res.status(error.status || 500);
+    res.json({ message: error || "An unknow error ocurred!!" });
+});
+
+const port = process.env.APP_PORT;
 app.listen(port, async () => {
     await sequelize.sync({ alter: true });
     console.log(`App listening on port ${port}`);
