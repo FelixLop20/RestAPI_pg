@@ -168,11 +168,11 @@ const editarTarea = async (req, res, next) => {
         } else {
             res.status(StatusCodes.BAD_REQUEST).json({
                 status: ReasonPhrases.BAD_REQUEST,
-                message: 'Necesitas agregar un colaborador a la tarea'
+                message: 'Asigana un Colaborador'
             });
         }
     } catch (error) {
-        return next(new HttpError(error, 500));
+        return next(new HttpError(error.message, 500));
     }
 }
 

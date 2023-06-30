@@ -4,7 +4,6 @@ const { ReasonPhrases, StatusCodes } = require("http-status-codes");
 
 //cargar los estados preinsertardos en la base de datos
 const cargarPrioridades = async (req, res, next) => {
-
     let estados;
     try {
         estados = await prioridadModel.findAll();

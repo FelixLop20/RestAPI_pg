@@ -33,8 +33,8 @@ app.use('/api/estado', estadoRouter);
 app.use('/api/prioridad', prioridadRouter);
 
 app.use((req, res) => {
-  const error = new HttpError("Could not find this route..", 404);
-  throw error;
+    const error = new HttpError("Could not find this route..", 404);
+    throw error;
 });
 
 
@@ -42,8 +42,12 @@ app.use((error, req, res, next) => {
     if (res.headerSent) {
         return next(error);
     }
-    res.status(error.status || 500);
-    res.json({ message: error || "An unknow error ocurred!!" });
+    res.status(error.code || 500);
+    res.json({
+        status: error.code,
+        message: error.message,
+        code : error.code
+    });
 });
 
 const port = process.env.APP_PORT;
