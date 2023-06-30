@@ -9,7 +9,7 @@ const cargarEstados = async (req, res, next) => {
     try {
         estados = await estadoModel.findAll();
     } catch (error) {
-        return next(new HttpError(error, 500));
+        return next(new HttpError(error.message, 404));
     }
     res.status(StatusCodes.OK).json({
         message: ReasonPhrases.OK,

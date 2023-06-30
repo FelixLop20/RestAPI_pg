@@ -202,13 +202,22 @@ const cambiarEstadoTarea = async (req, res, next) => {
     try {
         const tarea_id = req.params.tarea_id;
         const tarea = await tareaModel.findByPk(tarea_id);
-        console.log(tarea);
-        const estadoTarea = tarea && tarea.estado_id !== 3 && tarea.colab_id !== 1 ? await tarea.update({ estado_id: req.body.estado_id }) : null;
+        const estadoTarea = tarea &&
+            tarea.estado_id !== 3 &&
+            tarea.colab_id !== 1 ?
+            await tarea.update({ estado_id: req.body.estado_id }) : null;
 
-        res.status(estadoTarea ? StatusCodes.OK : StatusCodes.BAD_REQUEST).json({
-            message: estadoTarea ? '¡Estado Cambiado!' : 400
-        });
-
+        if (estadoTarea) {
+            res.status(StatusCodes.OK).json({
+                status: ReasonPhrases.OK,
+                message: 'Estado actualizado',
+            })
+        } else {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                status: ReasonPhrases.BAD_REQUEST,
+                message: 'Estado No Actualizado',
+            })
+        }
     } catch (error) {
         return next(new HttpError(error, 500));
     }
@@ -216,14 +225,12 @@ const cambiarEstadoTarea = async (req, res, next) => {
 
 //filtro de busqueda de tareas, por colaborador, prioridad, estado, rango de fechas
 const filtroTareas = async (req, res, next) => {
-
     try {
         const whereCondition = {
             'colab_id': req.body.colab_id || { [Op.ne]: null },
             'estado_id': req.body.estado_id || { [Op.ne]: null },
             'prioridad_id': req.body.prioridad_id || { [Op.ne]: null }
         };
-
         if (req.body.fecha_inicio || req.body.fecha_fin) {
             whereCondition[Op.or] = [
                 {
@@ -242,7 +249,8 @@ const filtroTareas = async (req, res, next) => {
         });
         //respuesta del servidor
         res.status(StatusCodes.OK).json({
-            message: ReasonPhrases.OK,
+            status: ReasonPhrases.OK,
+            message: 'Tereas Filtradas',
             data: tareas
         });
     } catch (error) {
