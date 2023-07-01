@@ -18,6 +18,7 @@ const atributosTarea = () => {
     ]
 };
 
+//funcion para devolver los modelos con los que se encuentra relacionada la tabla
 const includes = () => {
     return [
         {
@@ -36,7 +37,7 @@ const includes = () => {
             required: false
         },
     ]
-}
+};
 
 //obtener datos para editar y agregar tareas
 const datosTareas = (req) => {
@@ -50,7 +51,6 @@ const datosTareas = (req) => {
         notas: req.body.notas
     };
 };
-
 
 //cargar todas la tareas de la basde de datos
 const cargarTareas = async (req, res, next) => {
@@ -113,32 +113,6 @@ const crearTarea = async (req, res, next) => {
 };
 
 //editar las tareas que se encuentren unicamente en estado = Pendientes o en Proceso
-const edrTarea = async (req, res, next) => {
-    try {
-        const tarea_id = req.params.tarea_id;
-        const tarea = await tareaModel.findByPk(tarea_id);
-
-        let eTarea;
-
-        if (datosTareas(req).colab_id !== 1 && (datosTareas(req).estado_id !== 2 || datosTareas(req).estado_id !== 3)) {
-            eTarea = await tareaModel.update(datosTareas(req), {
-                where: {
-                    'id': tarea_id,
-                    'estado_id': {
-                        [Op.ne]: 3
-                    }
-                }
-            });
-        }
-        res.status(eTarea > 0 ? StatusCodes.OK : StatusCodes.BAD_REQUEST).json({
-            message: eTarea > 0 ? '¡Tarea Editada!' : 'No es posible editar esta tarea'
-        });
-
-    } catch (error) {
-        return next(new HttpError(error, 500));
-    }
-};
-
 const editarTarea = async (req, res, next) => {
     const tarea_id = req.params.tarea_id;
     const tareaData = datosTareas(req);
@@ -168,7 +142,7 @@ const editarTarea = async (req, res, next) => {
         } else {
             res.status(StatusCodes.BAD_REQUEST).json({
                 status: ReasonPhrases.BAD_REQUEST,
-                message: 'Asigana un Colaborador'
+                message: 'Asigna un Colaborador'
             });
         }
     } catch (error) {
@@ -188,14 +162,21 @@ const eliminarTarea = async (req, res, next) => {
                 }
             }
         });
-        res.status(elimTarea > 0 ? StatusCodes.OK : StatusCodes.BAD_REQUEST).json({
-            message: elimTarea > 0 ? '¡Tarea Eliminada!' : 'No es posible eliminar  esta tarea'
-        });
+        if (elimTarea) {
+            res.status(StatusCodes.OK).json({
+                status: ReasonPhrases.OK,
+                message: 'Tarea Eliminada!'
+            });
+        } else {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                status: ReasonPhrases.BAD_REQUEST,
+                message: 'No es posible eliminar la tarea'
+            });
+        }
     } catch (error) {
         return next(new HttpError(error, 500));
     }
 };
-
 
 //cambiar el estado de la tarea, ya sea comenzar la tarea o finalizarla.
 const cambiarEstadoTarea = async (req, res, next) => {

@@ -27,17 +27,19 @@ app.get('/', (req, res) => {
     res.send('App is runnig now');
 });
 
+//rutas de los endpoints
 app.use('/api/colaborador', colaboradorRouter);
 app.use('/api/tarea', tareaRouter);
 app.use('/api/estado', estadoRouter);
 app.use('/api/prioridad', prioridadRouter);
 
+//controlar si una url no existe
 app.use((req, res) => {
-    const error = new HttpError("Could not find this route..", 404);
+    const error = new HttpError("No se puede econtrar la ruta", 404);
     throw error;
 });
 
-
+//middlware manejo de erroes
 app.use((error, req, res, next) => {
     if (res.headerSent) {
         return next(error);
@@ -51,6 +53,8 @@ app.use((error, req, res, next) => {
 });
 
 const port = process.env.APP_PORT;
+
+//
 app.listen(port, async () => {
     await sequelize.sync({ alter: true });
     console.log(`App listening on port ${port}`);
